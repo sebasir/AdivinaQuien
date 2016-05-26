@@ -14,22 +14,25 @@ public class Controller extends WindowAdapter implements Runnable {
 	private Cliente jugadores[];
 	private Datos datos;
 	private ServerView vista;
+	private TransactionManager transManager;
 
 	public Controller(Datos data, ServerView vista) {
 		this.datos = data;
 		this.vista = vista;
 		new Thread(this).start();
-		
 	}
 
 	private synchronized void createMatch() {
 		matches.add(new Match(jugadores[0], jugadores[1]));
 	}
-	
-	public void writeLog(String message) {
+
+	public synchronized void writeLog(String message) {
 		vista.appendText(message);
 	}
-
+	public synchronized TransactionManager getTransManager() {
+		return transManager;
+	}
+	
 	@Override
 	public void windowClosing(WindowEvent e) {
 		vista.appendText("Cerrando conexiones...");

@@ -4,17 +4,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import controller.Urls;
+import controller.utils;
 
 public class DBConnection {
-	private static final String _user = "postgres";
-	private static final String _pass = "Sebasir123";
 	private boolean _autocommit = false;
+	private static String url;
+	private static String user;
+	private static String pass;
 
 	public Connection get() {
 		Connection conn = null;
 		try {
+			url = utils.decryptURL(Urls.databaseUrl.getUrl());
+			user = utils.decryptURL(Urls.databaseUser.getUrl());
+			pass = utils.decryptURL(Urls.databasePass.getUrl());
 			DriverManager.registerDriver(new org.postgresql.Driver());
-			conn = DriverManager.getConnection(Urls.databaseServer.getUrl(), _user, _pass);
+			conn = DriverManager.getConnection(url, user, pass);
 			conn.setAutoCommit(_autocommit);
 		} catch (Exception e) {
 			e.printStackTrace();

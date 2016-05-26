@@ -25,23 +25,28 @@ public class Cliente extends Thread {
 	}
 
 	public void run() {
-		boolean Salir = false;
 		serverController.writeLog("Un cliente se ha conectado\n");
-		while (!Salir) {
+		String[] credentials;
+		while (true) {
 			try {
-				String cadena = inStream.readUTF();
-				if (cadena.equals("Salir"))
-					Salir = true;
-				else {
-					serverController.writeLog("El cliente ha enviado: \n::::>" + cadena + '\n');
-					if (cadena.startsWith("user:")) {
-						setUserName(cadena.substring(5));
-					} else if (cadena.startsWith("ready"))
-						setReady(true);
+				String cadena = utils.decryptURL(inStream.readUTF());
+				serverController.writeLog("El cliente ha enviado: \n::::>" + cadena + '\n');
+				if (cadena.startsWith("user:")) {
+					setUserName(cadena.substring(5));
+				} else if (cadena.startsWith("ready")) {
+					setReady(true);
+				} else if (cadena.startsWith("reg:")) {
+					cadena = cadena.substring(4);
+					credentials = cadena.split("|");
+					serverController.getTransManager().registerUser(credentials[0], credentials[1], credentials[2]);
+				} else if (cadena.startsWith("log:")) {
+					cadena = cadena.substring(4);
+					credentials = cadena.split("|");
+					serverController.getTransManager().logInUser(credentials[0], credentials[1]);
 				}
 			} catch (IOException e) {
 				serverController.writeLog("Server: Se desconecto " + getUserName());
-				Salir = true;
+				break;
 			}
 		}
 		try {
