@@ -20,8 +20,8 @@ public class Match {
 
 	public void startMatch() {
 		try {
-			playerOne.enviar("ready");
-			playerTwo.enviar("ready");
+			playerOne.enviar("ready@ok");
+			playerTwo.enviar("ready@ok");
 			setStarted(true);
 		} catch (Exception e) {
 			setFinished(true);
@@ -30,8 +30,8 @@ public class Match {
 
 	public void sendOpponents() {
 		try {
-			playerTwo.enviar("user:" + playerOne.getUserName());
-			playerOne.enviar("user:" + playerTwo.getUserName());
+			playerTwo.enviar("user@ok@" + playerOne.getUserName());
+			playerOne.enviar("user@ok@" + playerTwo.getUserName());
 			setSaludoReady(true);
 		} catch (Exception e) {
 			setFinished(true);

@@ -5,59 +5,72 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+
 import model.Datos;
+import model.Personage;
 import view.ServerView;
 
 public class Controller extends WindowAdapter implements Runnable {
-	private ArrayList<Match> matches;
 	private ServerSocket socket;
-	private Cliente jugadores[];
 	private Datos datos;
 	private ServerView vista;
 	private TransactionManager transManager;
+	private MatchController matchController;
 
 	public Controller(Datos data, ServerView vista) {
 		this.datos = data;
 		this.vista = vista;
-		new Thread(this).start();
-	}
-
-	private synchronized void createMatch() {
-		matches.add(new Match(jugadores[0], jugadores[1]));
+		transManager = new TransactionManager(this, data);
+		if (!transManager.startTransactionManager())
+			writeLog("Error iniciando Server...");
+		else {
+			matchController = new MatchController(this);
+			matchController.start();
+			new Thread(this).start();
+		}
 	}
 
 	public synchronized void writeLog(String message) {
 		vista.appendText(message);
 	}
+
 	public synchronized TransactionManager getTransManager() {
 		return transManager;
 	}
-	
+
 	@Override
 	public void windowClosing(WindowEvent e) {
-		vista.appendText("Cerrando conexiones...");
-		if (datos.isListening())
-			System.out.println();
-		vista.dispose();
+		try {
+			vista.appendText("Cerrando conexiones...");
+			if (datos.isListening())
+				socket.close();
+			vista.dispose();
+		} catch (Exception ex) {
+
+		}
 		System.exit(0);
 	}
 
 	@Override
 	public void run() {
-		matches = new ArrayList<>();
 		vista.appendText("Escuchando por el puerto: " + Datos.serverPort);
 		try {
-			jugadores = new Cliente[2];
 			socket = new ServerSocket(Datos.serverPort, 50);
-			while (true) {
-				jugadores[0] = new Cliente(socket.accept(), this);
-				jugadores[0].start();
-				jugadores[1] = new Cliente(socket.accept(), this);
-				jugadores[1].start();
-				createMatch();
-			}
+			while (true)
+				matchController.addClient(new Cliente(socket.accept(), this));
 		} catch (IOException e) {
 			System.out.println("Controller:lanzarServidor => Error " + e.getLocalizedMessage());
+			System.exit(0);
 		}
+	}
+
+	public ArrayList<Personage> generarTablero() {
+		ArrayList<Personage> tablero = new ArrayList<Personage>();
+		while (tablero.size() != 15) {
+			int i = (int) Math.round(Math.random() * 34);
+			if (!tablero.contains(datos.getAllPersonages().get(i)))
+				tablero.add(datos.getAllPersonages().get(i));
+		}
+		return tablero;
 	}
 }

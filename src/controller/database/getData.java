@@ -67,6 +67,7 @@ public class getData {
 					case 0: // assigned null
 						data.put(rmetada.getColumnName(j), "");
 						break;
+					case -5:
 					case 2: // NUMERIC
 					case 3: // Decimal
 					case 4: // integer
@@ -170,13 +171,8 @@ public class getData {
 			}
 			return (valores);
 		} catch (Exception e) {
-			try {
-				e.printStackTrace();
-				return (null);
-			} catch (Exception exerr) {
-				exerr.printStackTrace();
-				return (null);
-			}
+			System.out.println("getData:exe => Error " + e.getLocalizedMessage());
+			return null;
 		} finally {
 			try {
 				if (ps != null) {
@@ -188,7 +184,7 @@ public class getData {
 					Conn = null;
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				System.out.println("getData:exe => Error " + ex.getLocalizedMessage());
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import javax.swing.JFrame;
@@ -29,6 +30,7 @@ public class ServerView extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		areaConsole.setEditable(false);
+		areaConsole.setFont(new Font("Consolas", Font.PLAIN, 12));
 		scrollConsole.setViewportView(areaConsole);
 		contenedor.add(scrollConsole);
 		reiniciar();

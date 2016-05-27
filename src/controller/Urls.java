@@ -1,10 +1,10 @@
 package controller;
 
 public enum Urls {
-	databaseUrl("0xRTAuJesiavOHp4hP0I2XmzEpmcc6rsaAgLvvm6Wt3ZVHR8uWBtCJD8npztxfvTXUAJ7qP0Lew="),
-	databaseUser("U5mBQVJDzW6SfiNi9L+YcA=="),
-	databasePass("GSTlwkQaf5D0qLHYV/sA1Q=="),
-	publicKey("_4d1v1n4Qu13n"),
+	databaseUrl("hklxubXscKAHSXKdbl86kZSQ8YFzaHtwJ/5YsCckiUV3Euv0ORKRWQWd4wIgOMYJ590hHnaf68M="),
+	databaseUser("SGu9S7t369TgcPbLxZLHjw=="),
+	databasePass("w+mWz+7ZLHD61IMz1xhMSw=="),
+	publicKey("_4di1v1n4Qu13n"),
 	algorithm("PBEWithMD5AndDES"),
 	dot("."),
 	basicPass("123"),

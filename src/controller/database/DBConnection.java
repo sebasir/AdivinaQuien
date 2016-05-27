@@ -22,7 +22,7 @@ public class DBConnection {
 			conn = DriverManager.getConnection(url, user, pass);
 			conn.setAutoCommit(_autocommit);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("DBConnection:get => Error " + e.getMessage());
 		}
 		return conn;
 	}

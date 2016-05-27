@@ -7,6 +7,7 @@ public class Personage implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int index;
 	private String nombre;
+	private byte[] imagen;
 	private ArrayList<Feature> features;
 
 	public Personage(int index, String nombre) {
@@ -30,12 +31,11 @@ public class Personage implements Serializable {
 		return nombre;
 	}
 
-	public Personage clonar() {
-		Personage clonado = new Personage(index, nombre);
-		ArrayList<Feature> listFeatures = new ArrayList<Feature>();
-		for (Feature f : features)
-			listFeatures.add(f);
-		clonado.setFeatures(listFeatures);
-		return clonado;
+	public byte[] getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(byte[] imagen) {
+		this.imagen = imagen;
 	}
 }
