@@ -6,7 +6,7 @@ import model.Personage;
 
 public class MatchController extends Thread {
 	private static ArrayList<Match> matches;
-	private Cliente waitingPlayer;
+	private Cliente waitingPlayerOne;
 	private Controller controller;
 	private ArrayList<Personage> tablero;
 
@@ -16,20 +16,21 @@ public class MatchController extends Thread {
 	}
 
 	public synchronized void addClient(Cliente player) {
-		if (waitingPlayer == null) {
+		if (waitingPlayerOne == null) {
 			tablero = controller.generarTablero();
-			waitingPlayer = player;
-			waitingPlayer.setTablero(tablero);
-			waitingPlayer.start();
-		} else if (!waitingPlayer.isAvailable()) {
-			waitingPlayer = player;
-			waitingPlayer.setTablero(tablero);
-			waitingPlayer.start();
-		} else {
+			waitingPlayerOne = player;
+			waitingPlayerOne.setTablero(tablero);
+			waitingPlayerOne.start();
+		} else if (!waitingPlayerOne.isAvailable()) {
+			waitingPlayerOne = player;
+			waitingPlayerOne.setTablero(tablero);
+			waitingPlayerOne.start();
+		} else if (waitingPlayerOne.isReady()) {
 			player.setTablero(tablero);
+			player.start();
 			controller.writeLog("Creando partida...");
-			matches.add(new Match(waitingPlayer, player));
-			waitingPlayer = null;
+			matches.add(new Match(waitingPlayerOne, player));
+			waitingPlayerOne = null;
 			tablero = null;
 		}
 	}
@@ -38,10 +39,26 @@ public class MatchController extends Thread {
 		while (true) {
 			synchronized (matches) {
 				for (Match m : matches) {
-					if (!m.isStarted()) {
-						if (m.isMatchReady()) {
-							m.sendOpponents();
-							m.startMatch();
+					if (!m.isFinished()) {
+						if (m.isMatchAvailable()) {
+							if (!m.isStarted()) {
+								if (m.isMatchReady()) {
+									if (!m.isSaludoReady()) {
+										m.sendOpponents();
+									} else {
+										if (!m.isTurnosReady()) {
+											m.sendTurnos();
+										} else {
+											if (m.selectedPersonages())
+												m.startMatch();
+										}
+									}
+								}
+							} else {
+								m.processTurn();
+							}
+						} else if (m.isStarted()) {
+							m.abortGame();
 						}
 					}
 				}

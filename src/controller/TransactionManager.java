@@ -110,8 +110,10 @@ public class TransactionManager {
 	}
 
 	public void disconnectUser(String user) {
-		System.out.println("Removing :::> " + user);
-		connectedUsers.remove(user);
+		if(user != null) {
+			System.out.println("Removing :::> " + user);
+			connectedUsers.remove(user);
+		}
 	}
 
 	private boolean isValid(String field) {
@@ -142,7 +144,6 @@ public class TransactionManager {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			personages = null;
 		}
 		return personages;

@@ -17,6 +17,11 @@ public class Cliente extends Thread {
 	private ObjectOutputStream outStream;
 	private ArrayList<Personage> tablero;
 	private String userName;
+	private String question;
+	private String answer;
+	private String personage;
+	private String guessedPersonage;
+	private int turno;
 	private boolean ready;
 	private boolean available;
 
@@ -59,20 +64,30 @@ public class Cliente extends Thread {
 				} else if (clientMessage[0].equals("log")) {
 					response = "log@" + serverController.getTransManager().logInUser(clientMessage[1], clientMessage[2]);
 					if (response.contains("ok")) {
-						enviarWait();
+						enviarImages();
 						setUserName(clientMessage[1]);
 					}
 				} else if (clientMessage[0].equals("dis")) {
 					serverController.getTransManager().disconnectUser(getUserName());
 					setAvailable(false);
 					break;
+				} else if (clientMessage[0].equals("q")) {
+					question = clientMessage[1];
+				} else if (clientMessage[0].equals("a")) {
+					answer = clientMessage[1];
+				} else if (clientMessage[0].equals("pers")) {
+					personage = clientMessage[1];
+				} else if (clientMessage[0].equals("guess")) {
+					setGuessedPersonage(clientMessage[1]);
 				}
+
 				if (!response.isEmpty())
 					enviar(response);
 			} catch (Exception e) {
-				e.printStackTrace();
 				serverController.writeLog("Server: Se desconecto " + getUserName());
-				serverController.getTransManager().disconnectUser(getUserName());
+				setAvailable(false);
+				if (getUserName() != null)
+					serverController.getTransManager().disconnectUser(getUserName());
 				break;
 			}
 		}
@@ -92,9 +107,15 @@ public class Cliente extends Thread {
 			outStream.writeObject(p);
 	}
 
-	public void enviarWait() throws IOException {
-		byte[] waitImage = Files.readAllBytes(new File("images/wait.jpg").toPath());
-		outStream.writeObject(waitImage);
+	public void enviarImages() throws IOException {
+		byte[] image = Files.readAllBytes(new File("images/wait.jpg").toPath());
+		outStream.writeObject(image);
+		outStream.reset();
+		image = Files.readAllBytes(new File("images/win.jpg").toPath());
+		outStream.writeObject(image);
+		outStream.reset();
+		image = Files.readAllBytes(new File("images/lose.jpg").toPath());
+		outStream.writeObject(image);
 		outStream.reset();
 	}
 
@@ -128,5 +149,45 @@ public class Cliente extends Thread {
 
 	public void setTablero(ArrayList<Personage> tablero) {
 		this.tablero = tablero;
+	}
+
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public int getTurno() {
+		return turno;
+	}
+
+	public void setTurno(int turno) {
+		this.turno = turno;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	public String getPersonage() {
+		return personage;
+	}
+
+	public void setPersonage(String personage) {
+		this.personage = personage;
+	}
+
+	public String getGuessedPersonage() {
+		return guessedPersonage;
+	}
+
+	public void setGuessedPersonage(String guessedPersonage) {
+		this.guessedPersonage = guessedPersonage;
 	}
 }

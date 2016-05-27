@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -23,11 +24,18 @@ public class Controller extends WindowAdapter implements Runnable {
 		transManager = new TransactionManager(this, data);
 		if (!transManager.startTransactionManager())
 			writeLog("Error iniciando Server...");
-		else {
+		else if (!checkWaitImage()) {
+			writeLog("Error con las imágenes...");
+		} else {
+			writeLog("Iniciando controlador de Partidas...");
 			matchController = new MatchController(this);
 			matchController.start();
 			new Thread(this).start();
 		}
+	}
+
+	private boolean checkWaitImage() {
+		return new File("images/wait.jpg").exists();
 	}
 
 	public synchronized void writeLog(String message) {
